@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#08090b" /><meta name="description" content="Заявка на навчання RESERVIST." />
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+    <title>Заявка на навчання — RESERVIST</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=17" /><script src="script.js?v=17" defer></script>
+    <script src="cms-config.js?v=17" defer></script><script src="cms-client.js?v=17" defer></script><script src="cms-public.js?v=17" defer></script>
+  </head>
+  <body data-cms-page="booking">
+    <div class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="index.html" aria-label="RESERVIST — на початок"><img class="brand-logo" src="assets/images/reservist-logo.png" alt="RESERVIST — практична підготовка" /></a>
+        <nav class="main-nav" aria-label="Навігація"><a href="index.html#directions">НАПРЯМКИ</a><a href="index.html#calendar">КАЛЕНДАР</a><a href="index.html#team">КОМАНДА</a><a href="index.html#faq">ПИТАННЯ</a></nav>
+        <div class="nav-actions"><a class="button button-small button-outline" href="index.html#calendar">ДАТИ <span>↗</span></a></div>
+        <button class="menu-toggle" type="button" aria-label="Відкрити меню" aria-expanded="false"><span></span><span></span></button>
+      </header>
+      <main>
+        <section class="direction-page-hero booking-hero">
+          <div class="eyebrow"><span class="section-number">ЗАПИС</span> RESERVIST / APPLICATION</div>
+          <h1>ЗАПИТ НА<br />НАВЧАННЯ</h1>
+          <div class="title-stripe"></div>
+          <p>Оберіть напрямок, місто та конкретну програму. Координатор підтвердить доступні дати й умови участі.</p>
+        </section>
+        <section class="booking-page-content">
+          <form class="booking-form application-form" id="application-form">
+            <div class="form-heading"><span>ДАНІ ЗАЯВКИ</span><span class="form-lock">ОПЛАТА ПІСЛЯ ПІДТВЕРДЖЕННЯ</span></div>
+            <label for="application-direction">1. НАПРЯМОК</label>
+            <select id="application-direction" name="direction" required>
+              <option value="" selected disabled>Спочатку оберіть напрямок</option>
+              <option value="carbine">Карабін</option>
+              <option value="medicine">Тактична медицина</option>
+              <option value="bootcamp">Bootcamp</option>
+              <option value="pistol">Курс пістолет</option>
+              <option value="open-storm">Open Storm Battle</option>
+              <option value="killhouse-cqb">Killhouse CQB</option>
+            </select>
+            <label for="application-course">2. КОНКРЕТНА ПРОГРАМА / ПАКЕТ</label>
+            <select id="application-course" name="course" required disabled>
+              <option value="" selected disabled>Спочатку оберіть напрямок</option>
+            </select>
+            <label for="application-city">3. МІСТО / ЛОКАЦІЯ</label>
+            <select id="application-city" name="city" required disabled>
+              <option value="" selected disabled>Спочатку оберіть напрямок</option>
+            </select>
+            <div class="payment-pending"><strong>БЕЗ ПЕРЕДОПЛАТИ НА САЙТІ</strong>Заявка фіксує ваш запит без автоматичного списання коштів. Координатор відділу продзвону зв’яжеться з вами, відповість на питання, підтвердить дату набору та надішле реквізити для бронювання.</div>
+            <div class="form-two-columns">
+              <div><label for="application-name">ІМ’Я</label><input id="application-name" name="name" autocomplete="name" placeholder="Як до вас звертатися" required /></div>
+              <div><label for="application-phone">НОМЕР ТЕЛЕФОНУ</label><input id="application-phone" name="phone" type="tel" autocomplete="tel" placeholder="+380…" required /></div>
+            </div>
+            <label for="application-promo">4. ПРОМОКОД <span class="optional-label">НЕОБОВ’ЯЗКОВО</span></label>
+            <input id="application-promo" name="promo" autocomplete="off" placeholder="Якщо маєте промокод" />
+            <button type="submit" class="button button-primary form-submit">ЗАЛИШИТИ ЗАЯВКУ <span>↗</span></button>
+            <p class="form-disclaimer">Після відправлення заявки координатор відділу продзвону зв’яжеться з вами для підтвердження дати та деталей участі.</p>
+            <div class="form-feedback" aria-live="polite"></div>
+          </form>
+          <aside class="booking-side-note">
+            <span class="mono-label">НАСТУПНИЙ КРОК /</span>
+            <h2>ПІДТВЕРДЖЕННЯ<br /><span>КООРДИНАТОРОМ</span></h2>
+            <p>Координатор відділу продзвону отримає обраний курс, місто та контакт, після чого підтвердить доступну дату й організаційні деталі.</p>
+            <a href="index.html#calendar" class="text-link">ПЕРЕГЛЯНУТИ КАЛЕНДАР <span>↗</span></a>
+          </aside>
+        </section>
+      </main>
+      <footer class="footer">
+        <div class="footer-grid">
+          <div class="footer-brand-col">
+            <a class="brand" href="index.html" aria-label="RESERVIST — на початок"><img class="brand-logo" src="assets/images/reservist-logo.png" alt="RESERVIST — практична підготовка" /></a>
+            <p class="footer-tagline">ПІДГОТОВКА З ПОЗИЦІЄЮ. ПРАКТИКА З ВІДПОВІДАЛЬНІСТЮ.</p>
+          </div>
+          <div class="footer-col">
+            <span class="footer-col-title">НАПРЯМКИ</span>
+            <a href="directions/carbine.html">Карабін</a>
+            <a href="directions/medicine.html">Тактична медицина</a>
+            <a href="directions/bootcamp.html">Bootcamp</a>
+            <a href="directions/pistol.html">Курс пістолет</a>
+            <a href="directions/open-storm.html">Open Storm Battle</a>
+            <a href="directions/killhouse-cqb.html">Killhouse CQB</a>
+          </div>
+          <div class="footer-col">
+            <span class="footer-col-title">НАВІГАЦІЯ</span>
+            <a href="index.html#directions">Каталог програм</a>
+            <a href="index.html#calendar">Календар подій</a>
+            <a href="index.html#team">Інструктори</a>
+            <a href="index.html#faq">Часті питання</a>
+          </div>
+          <div class="footer-col">
+            <span class="footer-col-title">КОНТАКТИ</span>
+            <nav class="footer-links" aria-label="Контакти">
+              <a href="tel:+380637343329">+380 63 734 33 29</a>
+              <a href="https://t.me/reservist.ua" target="_blank" rel="noreferrer">TELEGRAM ↗</a>
+              <a href="https://www.instagram.com/reservist.ua" target="_blank" rel="noreferrer">INSTAGRAM ↗</a>
+            </nav>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span class="footer-copy">© RESERVIST · 2026 · УСІ ПРАВА ЗАХИЩЕНО</span>
+          <div class="footer-legal-links">
+            <a href="privacy.html">Політика конфіденційності</a>
+            <a href="offer.html">Публічна оферта</a>
+          </div>
+          <a href="index.html#directions" class="back-top">УСІ НАПРЯМКИ ↗</a>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

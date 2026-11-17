@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#08090b" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+    <title>Адміністрування — RESERVIST</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=17" />
+    <link rel="stylesheet" href="admin.css?v=17" />
+    <script src="cms-config.js?v=16" defer></script>
+    <script src="cms-client.js?v=16" defer></script>
+    <script src="admin.js?v=16" defer></script>
+  </head>
+  <body class="cms-admin-page">
+    <header class="cms-header">
+      <a class="brand" href="index.html" aria-label="RESERVIST — публічний сайт">
+        <img class="brand-logo" src="assets/images/reservist-logo.png" alt="RESERVIST" />
+      </a>
+      <div class="cms-header-actions">
+        <span class="cms-status-dot" aria-hidden="true"></span>
+        <span>ПАНЕЛЬ КЕРУВАННЯ</span>
+        <a href="index.html" target="_blank" rel="noreferrer">ВІДКРИТИ САЙТ ↗</a>
+        <button id="cms-signout" class="cms-button cms-button-quiet" type="button" hidden>ВИЙТИ</button>
+      </div>
+    </header>
+
+    <main class="cms-main">
+      <section id="cms-login-view" class="cms-login-panel">
+        <div class="cms-eyebrow">ЗАХИЩЕНА АВТОРИЗАЦІЯ / ADMIN ACCESS</div>
+        <h1>ВХІД ДО<br /><span>АДМІН-ПАНЕЛІ</span></h1>
+        <p>Увійдіть через Supabase-акаунт, якому адміністратор надав роль RESERVIST.</p>
+        <form id="cms-login-form" class="cms-form">
+          <label for="cms-email">EMAIL</label>
+          <input id="cms-email" name="email" type="email" autocomplete="username" required />
+          <label for="cms-password">ПАРОЛЬ</label>
+          <input id="cms-password" name="password" type="password" autocomplete="current-password" required />
+          <button class="cms-button cms-button-primary" type="submit">УВІЙТИ <span>↗</span></button>
+          <p id="cms-login-message" class="cms-feedback" role="status"></p>
+        </form>
+      </section>
+
+      <section id="cms-workspace" hidden>
+        <div class="cms-workspace-heading">
+          <div>
+            <div class="cms-eyebrow">RESERVIST / CONTENT MANAGEMENT</div>
+            <h1>АДМІНІСТРУВАННЯ</h1>
+          </div>
+          <p>Зміни зберігаються у Supabase та застосовуються на сайті після публікації.</p>
+        </div>
+
+        <nav class="cms-tabs" aria-label="Розділи адмін-панелі">
+          <button type="button" class="is-active" data-cms-tab="pages">СТОРІНКИ</button>
+          <button type="button" data-cms-tab="courses">НАПРЯМКИ Й ПРОГРАМИ</button>
+          <button type="button" data-cms-tab="events">КАЛЕНДАР / ІВЕНТИ</button>
+          <button type="button" data-cms-tab="applications">ЗАЯВКИ Й ГРУПИ <span id="cms-new-apps-badge" class="cms-tab-badge" hidden>0</span></button>
+          <button type="button" data-cms-tab="team">КОМАНДА</button>
+          <button type="button" data-cms-tab="reviews">ВІДГУКИ</button>
+          <button type="button" data-cms-tab="theme">ТЕМА САЙТУ</button>
+        </nav>
+
+        <section class="cms-panel is-active" data-cms-panel="pages">
+          <div class="cms-panel-heading">
+            <div><div class="cms-eyebrow">BLOCK EDITOR / SEO</div><h2>СТОРІНКА САЙТУ</h2></div>
+            <div class="cms-inline-actions">
+              <button id="cms-reset-page" class="cms-button cms-button-quiet" type="button">СКИНУТИ ЗМІНИ СТОРІНКИ</button>
+              <button id="cms-save-page" class="cms-button cms-button-primary" type="button">ЗБЕРЕГТИ СТОРІНКУ</button>
+            </div>
+          </div>
+          <div class="cms-page-toolbar">
+            <label>СТОРІНКА
+              <select id="cms-page-select">
+                <option value="home">Головна</option>
+                <option value="booking">Запис</option>
+                <option value="carbine">Карабін</option>
+                <option value="medicine">Тактична медицина</option>
+                <option value="bootcamp">Bootcamp</option>
+                <option value="pistol">Курс пістолет</option>
+                <option value="open-storm">Open Storm Battle</option>
+                <option value="killhouse-cqb">Killhouse CQB</option>
+              </select>
+            </label>
+            <label class="cms-publish-toggle"><input id="cms-page-published" type="checkbox" checked /> ОПУБЛІКОВАНО</label>
+            <label>SEO TITLE <input id="cms-seo-title" maxlength="160" /></label>
+            <label>SEO DESCRIPTION <input id="cms-seo-description" maxlength="320" /></label>
+          </div>
+          <div class="cms-page-editor">
+            <aside class="cms-editor-sidebar">
+              <div class="cms-editor-section">
+                <div class="cms-editor-section-heading"><h3>БЛОКИ СТОРІНКИ</h3><span>ПОРЯДОК / ВИДИМІСТЬ</span></div>
+                <ol id="cms-block-list" class="cms-block-list"></ol>
+              </div>
+              <div class="cms-editor-section">
+                <div class="cms-editor-section-heading"><h3>ВМІСТ БЛОКУ</h3><span>НАТИСНІТЬ НА ТЕКСТ АБО ФОТО В ПЕРЕГЛЯДІ</span></div>
+                <p id="cms-selection-empty" class="cms-selection-empty">Вибраний елемент можна редагувати тут.</p>
+                <div id="cms-field-editor" hidden>
+                  <div id="cms-dynamic-tab-notice" class="cms-note" hidden style="margin:0 0 10px;padding:10px 12px;border:1px solid rgba(255,87,34,.45);background:rgba(255,87,34,.08);">
+                    <span id="cms-dynamic-tab-text" style="display:block;margin-bottom:8px;color:var(--text);">Цей елемент підтягується з бази даних.</span>
+                    <button id="cms-dynamic-tab-jump" class="cms-button cms-button-primary" type="button" style="min-height:32px;padding:6px 12px;">ПЕРЕЙТИ ДО РЕДАГУВАННЯ У БАЗІ ↗</button>
+                  </div>
+                  <label id="cms-field-label" for="cms-field-value">ВИБРАНИЙ ЕЛЕМЕНТ</label>
+                  <textarea id="cms-field-value" rows="3"></textarea>
+                  <label id="cms-image-alt-wrap" hidden>ALT ОПИС ЗОБРАЖЕННЯ
+                    <input id="cms-image-alt" />
+                  </label>
+                  <label id="cms-image-upload-wrap" class="cms-file-label" hidden>ЗАМІНИТИ ФОТО
+                    <input id="cms-image-upload" type="file" accept="image/jpeg,image/png,image/webp,image/avif" />
+                  </label>
+                  <div class="cms-inline-actions">
+                    <button id="cms-save-field" class="cms-button cms-button-primary" type="button">ЗБЕРЕГТИ ТЕКСТ</button>
+                    <button id="cms-clear-field" class="cms-button cms-button-quiet" type="button">СКИНУТИ</button>
+                  </div>
+                </div>
+                <p id="cms-page-message" class="cms-feedback" role="status"></p>
+              </div>
+            </aside>
+            <div class="cms-preview-wrap">
+              <div class="cms-preview-heading"><span>LIVE PREVIEW / НАТИСНІТЬ НА ТЕКСТ ЧИ ФОТО</span><div class="cms-device-switch" role="group" aria-label="Розмір перегляду"><button type="button" class="is-active" data-device="desktop">ПК</button><button type="button" data-device="tablet">ПЛАНШЕТ</button><button type="button" data-device="mobile">МОБІЛЬНИЙ</button></div><label><input id="cms-edit-mode" type="checkbox" checked /> РЕЖИМ РЕДАГУВАННЯ</label></div>
+              <iframe id="cms-preview" title="Попередній перегляд сторінки RESERVIST"></iframe>
+            </div>
+          </div>
+        </section>
+
+        <section class="cms-panel" data-cms-panel="courses" hidden>
+          <div class="cms-panel-heading">
+            <div><div class="cms-eyebrow">CATALOG / PROGRAMS</div><h2>НАПРЯМКИ Й ПРОГРАМИ</h2></div>
+            <div class="cms-inline-actions">
+              <button id="cms-toggle-quick-launch" class="cms-button cms-button-primary" type="button">⚡ СТВОРИТИ НОВИЙ КУРС / ГРУ В 1 КРОК</button>
+            </div>
+          </div>
+
+          <section id="cms-quick-launch-card" class="cms-quick-launch-card" hidden>
+            <div class="cms-quick-launch-header">
+              <div>
+                <div class="cms-eyebrow">МАЙСТЕР ШВИДКОГО ЗАПУСКУ / 1-STEP WIZARD</div>
+                <h3>⚡ ШВИДКЕ ДОДАВАННЯ НОВОГО КУРСУ АБО ГРИ НА САЙТ</h3>
+                <p>Заповніть прості поля людською мовою — система сама створить <strong>сторінку курсу</strong>, <strong>картки тарифів</strong>, <strong>FAQ</strong>, <strong>підключить форму запису</strong> та <strong>додасть подію в календар</strong>. Жодних технічних кодів вручну.</p>
+              </div>
+              <div class="cms-inline-actions" style="margin-top:0;">
+                <button id="cms-preset-airsoft" class="cms-button cms-button-quiet" type="button">🎯 ЗАПОВНИТИ ШАБЛОН: СТРАЙКБОЛ НА ВІДКРИТОМУ ПОЛІГОНІ</button>
+                <button id="cms-close-quick-launch" class="cms-button cms-button-quiet" type="button">ЗГОРНУТИ ✕</button>
+              </div>
+            </div>
+            <form id="cms-quick-launch-form" class="cms-form cms-quick-launch-form">
+              <div class="cms-quick-launch-grid">
+                <div class="cms-quick-launch-col">
+                  <label>1. НАЗВА НОВОГО КУРСУ АБО ІВЕНТУ <input name="name" placeholder="Напр. Страйкбольні ігри на відкритому полігоні" required /></label>
+                  <label>2. КОРОТКИЙ ОПИС (для головної сторінки) <input name="summary" placeholder="Напр. Відкритий полігон · 1 день · власне спорядження або прокат" required /></label>
+                  <div class="cms-form-row cms-form-row-even">
+                    <label>3. МІСТА ПРОВЕДЕННЯ <input name="cities" placeholder="Київ, Львів" value="Київ" required /></label>
+                    <label>4. ТРИВАЛІСТЬ / ФОРМАТ <input name="duration_label" placeholder="1 день · Відкритий полігон" value="1 день · Відкритий полігон" required /></label>
+                  </div>
+                  <label>5. ОПИС НА СТОРІНЦІ КУРСУ <textarea name="description" rows="3" placeholder="Динамічна тактична гра на відкритому полігоні з інструкторським супроводом. Можна приїхати зі своїм спорядженням або взяти комплект у прокат."></textarea></label>
+                  <div class="cms-form-row cms-form-row-even">
+                    <label>ФОТО ОБКЛАДИНКИ (ШАБЛОН АБО URL)
+                      <input name="hero_image_url" list="cms-preset-images" placeholder="assets/images/open-storm-field.webp" value="assets/images/open-storm-field.webp" />
+                      <datalist id="cms-preset-images">
+                        <option value="assets/images/open-storm-field.webp">Відкритий полігон — страйкбол</option>
+                        <option value="assets/images/open-storm-hero.webp">Командний брифінг</option>
+                        <option value="assets/images/bootcamp-hero.jpg">Польовий вишкіл</option>
+                        <option value="assets/images/carbine-hero.webp">Стрілецький полігон (Карабін)</option>
+                        <option value="assets/images/pistol-hero.jpg">Стрільбище (Пістолет)</option>
+                        <option value="assets/images/medicine-hero.webp">Тактична медицина</option>
+                      </datalist>
+                    </label>
+                    <label class="cms-file-label">АБО ЗАВАНТАЖИТИ ФОТО З КОМП’ЮТЕРА
+                      <input name="hero_image_file" type="file" accept="image/jpeg,image/png,image/webp,image/avif" />
+                    </label>
+                  </div>
+                </div>
+                <div class="cms-quick-launch-col">
+                  <label>6. ПАКЕТИ УЧАСТІ / ТАРИФИ (кожен рядок: <code>Назва пакета :: Ціна в ₴ :: Короткий опис</code>)
+                    <textarea name="tariffs_text" rows="5" required placeholder="Власне спорядження :: 1000 :: Квиток на гру зі своїм комплектом&#10;Базовий прокат :: 2000 :: Квиток, привід AK/AR, магазин, кульки та захист очей&#10;Повний комплект :: 2500 :: Усе включено: привід, форма, захист, плитоноска й шолом">Стандартний квиток :: 1500 :: Участь у програмі під супроводом інструкторів</textarea>
+                  </label>
+                  <div class="cms-quick-launch-event-box">
+                    <span class="cms-eyebrow">7. ПЕРША ДАТА В КАЛЕНДАРІ (НЕОБОВ’ЯЗКОВО — СТВОРИТЬ ПОДІЮ АВТОМАТИЧНО)</span>
+                    <div class="cms-form-row cms-form-row-even">
+                      <label>ДАТА ПРОВЕДЕННЯ <input name="event_date" type="date" /></label>
+                      <label>ЧАС ПОЧАТКУ <input name="event_time" type="time" value="09:00" /></label>
+                    </div>
+                    <div class="cms-form-row cms-form-row-even">
+                      <label>ЛОКАЦІЯ / ПРИМІТКА <input name="event_venue" placeholder="Напр. Відкритий полігон (точку збору надає координатор)" /></label>
+                      <label>ПОВТОРИТИ ЩОТИЖНЯ <input name="repeat_weeks" type="number" min="0" max="12" value="0" /></label>
+                    </div>
+                  </div>
+                  <div class="cms-inline-actions">
+                    <button class="cms-button cms-button-primary" type="submit">🚀 СТВОРИТИ КУРС, ТАРИФИ ТА ПОДІЮ В КАЛЕНДАРІ</button>
+                  </div>
+                  <p id="cms-quick-launch-feedback" class="cms-feedback" role="status"></p>
+                </div>
+              </div>
+            </form>
+          </section>
+
+          <p class="cms-note">Нижче можна детально редагувати будь-який існуючий напрямок або окремі тарифи. Технічні поля (код адреси, порядок) генеруються автоматично.</p>
+          <div class="cms-management-grid">
+            <div class="cms-record-list-panel">
+              <div class="cms-editor-section-heading"><h3>НАПРЯМКИ</h3><button id="cms-new-direction" class="cms-button cms-button-quiet" type="button">+ НОВИЙ</button></div>
+              <div id="cms-direction-list" class="cms-record-list"></div>
+            </div>
+            <form id="cms-direction-form" class="cms-form cms-record-form">
+              <h3>ДАНІ НАПРЯМКУ</h3>
+              <label>НАЗВА НАПРЯМКУ <input name="name" placeholder="Напр. Страйкбол на відкритому полігоні" required /></label>
+              <label>КОРОТКИЙ ОПИС (на головній) <textarea name="summary" rows="2" placeholder="Напр. Відкритий полігон · 1 день · прокат або своє спорядження"></textarea></label>
+              <label>МІСТА ПРОВЕДЕННЯ (через кому) <input name="cities" placeholder="Київ, Львів, Дніпро" /></label>
+              <label>ПОВНИЙ ОПИС (для сторінки курсу) <textarea name="description" rows="4"></textarea></label>
+              <label>FAQ — ЧАСТІ ПИТАННЯ (кожен рядок: Питання? :: Відповідь) <textarea name="faq_text" rows="3" placeholder="Чи можна прийти без досвіду? :: Так, базовий рівень розрахований на новачків."></textarea></label>
+              <label>URL ЗОБРАЖЕННЯ <input name="hero_image_url" type="text" placeholder="https://… або assets/images/…" /></label>
+              <label class="cms-file-label">ЗАВАНТАЖИТИ ФОТО З КОМП’ЮТЕРА <input name="hero_image_file" type="file" accept="image/jpeg,image/png,image/webp,image/avif" /></label>
+              <label class="cms-publish-toggle"><input name="is_active" type="checkbox" checked /> АКТИВНИЙ НА САЙТІ</label>
+              <details class="cms-tech-details">
+                <summary>Технічні параметри та SEO (заповнюються автоматично)</summary>
+                <div class="cms-tech-details-body">
+                  <label>SLUG (код у адресі латиницею) <input name="slug" placeholder="Автоматично з назви" /></label>
+                  <label>ПОРЯДОК У СПИСКУ <input name="sort_order" type="number" min="0" value="7" /></label>
+                  <label>SEO TITLE <input name="seo_title" maxlength="160" /></label>
+                  <label>SEO DESCRIPTION <textarea name="seo_description" rows="2" maxlength="320"></textarea></label>
+                </div>
+              </details>
+              <div class="cms-inline-actions"><button class="cms-button cms-button-primary" type="submit">ЗБЕРЕГТИ НАПРЯМОК</button><button id="cms-delete-direction" class="cms-button cms-button-danger" type="button">ВИДАЛИТИ</button></div>
+              <p class="cms-feedback" role="status"></p>
+              <input name="existing_slug" type="hidden" />
+              <p class="cms-hint">Новий напрямок автоматично отримує власну сторінку курсу та базовий тариф (якщо тарифів ще немає), і одразу з’являється на головній, у календарі та формі запису.</p>
+            </form>
+          </div>
+          <div class="cms-program-area">
+            <div class="cms-panel-heading"><div><div class="cms-eyebrow">PRICING / DURATION</div><h2>ТАРИФИ Й ПАКЕТИ ОБРАНОГО НАПРЯМКУ</h2></div><button id="cms-new-program" class="cms-button cms-button-quiet" type="button">+ НОВА ПРОГРАМА</button></div>
+            <div class="cms-management-grid">
+              <div id="cms-program-list" class="cms-record-list"></div>
+              <form id="cms-program-form" class="cms-form cms-record-form">
+                <h3>ДАНІ ПРОГРАМИ / ТАРИФУ</h3>
+                <label>НАПРЯМОК <select name="direction_slug" required></select></label>
+                <label>НАЗВА ПРОГРАМИ АБО ПАКЕТА <input name="name" placeholder="Напр. Базовий пакет (з прокатом)" required /></label>
+                <div class="cms-form-row cms-form-row-even">
+                  <label>ЦІНА, ₴ <input name="price_uah" type="number" min="1" step="1" placeholder="2000" required /></label>
+                  <label>ТРИВАЛІСТЬ / ФОРМАТ <input name="duration_label" placeholder="1 день" required /></label>
+                </div>
+                <label>ОПИС КАРТКИ <textarea name="description" rows="3"></textarea></label>
+                <label>ПАРАМЕТРИ КАРТКИ (кожен рядок — Назва: Значення) <textarea name="specs_text" rows="3" placeholder="Початок: Орієнтовно о 09:00&#10;Формат: Відкритий полігон&#10;Спорядження: Входить у вартість"></textarea></label>
+                <label>URL ЗОБРАЖЕННЯ <input name="image_url" type="text" placeholder="https://… або assets/images/…" /></label>
+                <label class="cms-file-label">ЗАВАНТАЖИТИ ФОТО З КОМП’ЮТЕРА <input name="image_file" type="file" accept="image/jpeg,image/png,image/webp,image/avif" /></label>
+                <label class="cms-publish-toggle"><input name="is_active" type="checkbox" checked /> АКТИВНА НА САЙТІ</label>
+                <details class="cms-tech-details">
+                  <summary>Технічні параметри (заповнюються автоматично)</summary>
+                  <div class="cms-tech-details-body">
+                    <label>SLUG (код латиницею) <input name="slug" placeholder="Автоматично з назви" /></label>
+                    <label>ПОРЯДОК КАРТКИ <input name="sort_order" type="number" min="0" value="1" /></label>
+                  </div>
+                </details>
+                <div class="cms-inline-actions"><button class="cms-button cms-button-primary" type="submit">ЗБЕРЕГТИ ПРОГРАМУ</button><button id="cms-delete-program" class="cms-button cms-button-danger" type="button">ВИДАЛИТИ</button></div>
+                <p class="cms-feedback" role="status"></p>
+                <input name="existing_slug" type="hidden" />
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <section class="cms-panel" data-cms-panel="events" hidden>
+          <div class="cms-panel-heading">
+            <div><div class="cms-eyebrow">CALENDAR / EVENTS</div><h2>КАЛЕНДАР ІВЕНТІВ</h2></div>
+            <div class="cms-inline-actions">
+              <button id="cms-open-wizard-from-events" class="cms-button cms-button-quiet" type="button">⚡ СТВОРИТИ НОВИЙ КУРС / ГРУ</button>
+              <button id="cms-new-event" class="cms-button cms-button-primary" type="button">+ НОВИЙ ІВЕНТ</button>
+            </div>
+          </div>
+          <p class="cms-note">Ці події показуються в календарі на головній сторінці та в блоці «Найближчі дати» на сторінці відповідного курсу. Якщо ви додаєте абсолютно новий вид гри (якого ще немає в напрямках), просто оберіть у списку напрямків <strong>«+ Створити новий напрямок / гру прямо тут…»</strong>.</p>
+          <div class="cms-event-filters">
+            <label>НАПРЯМОК <select id="cms-event-filter-direction"><option value="all">Усі</option></select></label>
+            <label>ПОКАЗАТИ <select id="cms-event-filter-time"><option value="upcoming">Майбутні</option><option value="past">Минулі</option><option value="all">Усі</option></select></label>
+          </div>
+          <div class="cms-management-grid">
+            <div id="cms-event-list" class="cms-record-list"></div>
+            <form id="cms-event-form" class="cms-form cms-record-form">
+              <h3>ДАНІ ІВЕНТУ</h3>
+              <label>НАПРЯМОК <select name="direction_slug" required></select></label>
+              <div id="cms-event-new-direction-wrap" class="cms-inline-new-direction" hidden>
+                <label>НАЗВА НОВОГО НАПРЯМКУ АБО ГРИ <input name="new_direction_name" placeholder="Напр. Страйкбол на відкритому полігоні" /></label>
+                <label>КОРОТКИЙ ОПИС НАПРЯМКУ <input name="new_direction_summary" placeholder="Напр. Відкритий полігон · 1 день · прокат або власне спорядження" /></label>
+                <p class="cms-hint">Система автоматично створить сторінку для цього напрямку та базовий тариф із ціною івенту.</p>
+              </div>
+              <label>ПРОГРАМА / ПАКЕТ <select name="program_slug"></select></label>
+              <label>НАЗВА В КАЛЕНДАРІ <input name="title" placeholder="Напр. Страйкбольна гра · Відкритий полігон" required /></label>
+              <label>МІСТО <input name="city" list="cms-event-cities" placeholder="Київ" required /><datalist id="cms-event-cities"></datalist></label>
+              <div class="cms-form-row cms-form-row-even"><label>ДАТА <input name="date" type="date" required /></label><label>ЧАС <input name="time" type="time" value="09:00" required /></label></div>
+              <label>ЦІНА, ₴ (базова вартість участі) <input name="price_uah" type="number" min="0" placeholder="1500" /></label>
+              <label>МІСЦЕ / ПРИМІТКА <input name="venue" placeholder="Напр. Відкритий полігон, точку збору надає координатор" /></label>
+              <label class="cms-publish-toggle"><input name="is_active" type="checkbox" checked /> ПОКАЗУВАТИ В КАЛЕНДАРІ</label>
+              <label class="cms-repeat-row">ПОВТОРИТИ ЩЕ <input name="repeat_weeks" type="number" min="0" max="26" value="0" /> ТИЖН. (щотижня, лише для нових)</label>
+              <div class="cms-inline-actions"><button class="cms-button cms-button-primary" type="submit">ЗБЕРЕГТИ ІВЕНТ</button><button id="cms-duplicate-event" class="cms-button cms-button-quiet" type="button">СТВОРИТИ КОПІЮ (+7 ДНІВ)</button><button id="cms-delete-event" class="cms-button cms-button-danger" type="button">ВИДАЛИТИ</button></div>
+              <p class="cms-feedback" role="status"></p>
+              <input name="id" type="hidden" />
+            </form>
+          </div>
+        </section>
+
+        <section class="cms-panel" data-cms-panel="applications" hidden>
+          <div class="cms-panel-heading">
+            <div><div class="cms-eyebrow">CRM / CALL CENTER &amp; FINANCE</div><h2>ЗАЯВКИ, СПИСКИ ГРУП І ПРОМОКОДИ</h2></div>
+            <div class="cms-inline-actions">
+              <button id="cms-export-apps-csv" class="cms-button cms-button-quiet" type="button">⬇ ЕКСПОРТ CSV (EXCEL)</button>
+              <button id="cms-new-application" class="cms-button cms-button-primary" type="button">+ ДОДАТИ ЗАЯВКУ ВРУЧНУ</button>
+            </div>
+          </div>
+
+          <div class="cms-subview-bar" role="tablist" aria-label="Режими роботи із заявками">
+            <button type="button" class="cms-subview-btn is-active" data-apps-view="callcenter">📞 ВІДДІЛ ПРОДЗВОНУ (УСІ ЗАЯВКИ)</button>
+            <button type="button" class="cms-subview-btn" data-apps-view="finance">💰 ТАБЛИЦІ ОПЛАЧЕНИХ ІВЕНТІВ (ФІНАНСИСТ)</button>
+            <button type="button" class="cms-subview-btn" data-apps-view="sheets">📊 АВТО-ТАБЛИЦІ Й ДОСТУПИ (GOOGLE DRIVE)</button>
+            <button type="button" class="cms-subview-btn" data-apps-view="promos">🏷️ ПРОМОКОДИ НА САЙТІ</button>
+          </div>
+
+          <div id="cms-apps-stats" class="cms-stats-strip"></div>
+
+          <div id="cms-apps-view-callcenter">
+            <div class="cms-event-filters">
+              <label>СТАТУС
+                <select id="cms-app-filter-status">
+                  <option value="all">Усі статуси</option>
+                  <option value="new">Нові (очікують дзвінка)</option>
+                  <option value="calling">У роботі (продзвін)</option>
+                  <option value="paid">Підтверджено / Оплачено</option>
+                  <option value="cancelled">Скасовано</option>
+                </select>
+              </label>
+              <label>НАПРЯМОК
+                <select id="cms-app-filter-direction">
+                  <option value="all">Усі напрямки та консультації</option>
+                </select>
+              </label>
+              <label>ПОШУК (ІМ’Я АБО ТЕЛЕФОН)
+                <input id="cms-app-search" type="search" placeholder="Пошук за ім’ям чи номером…" />
+              </label>
+            </div>
+            <div class="cms-management-grid">
+              <div id="cms-application-list" class="cms-record-list"></div>
+              <form id="cms-application-form" class="cms-form cms-record-form">
+                <h3>КАРТКА ЗАЯВКИ / УЧАСНИКА</h3>
+                <div class="cms-form-row cms-form-row-even">
+                  <label>ІМ’Я УЧАСНИКА <input name="name" required /></label>
+                  <label>ТЕЛЕФОН <input name="phone" required /></label>
+                </div>
+                <div class="cms-form-row cms-form-row-even">
+                  <label>СТАТУС ОБРОБКИ
+                    <select name="status">
+                      <option value="new">🟢 Нова заявка (потрібен дзвінок)</option>
+                      <option value="calling">🟡 У роботі (відділ продзвону)</option>
+                      <option value="paid">🔵 Підтверджено / Оплачено (у список фінансиста)</option>
+                      <option value="cancelled">⚪ Скасовано / Не актуально</option>
+                    </select>
+                  </label>
+                  <label>ХТО ДЗВОНИВ / КОМЕНТАР ОПЕРАТОРА <input name="caller_name" placeholder="Напр. Марія (продзвін)" /></label>
+                </div>
+                <div class="cms-form-row cms-form-row-even">
+                  <label>НАПРЯМОК <select name="direction_slug"></select></label>
+                  <label>ПРОГРАМА / ПАКЕТ <select name="program_slug"></select></label>
+                </div>
+                <label>⚡ ШВИДКА ПРИВ’ЯЗКА ДО ЗАПЛАНОВАНОЇ ДАТИ З КАЛЕНДАРЯ ІВЕНТІВ
+                  <select name="quick_event_pick">
+                    <option value="">— Оберіть заплановану дату з календаря (підставить місто, дату і суму) або вкажіть нижче —</option>
+                  </select>
+                </label>
+                <div class="cms-form-row cms-form-row-even">
+                  <label>МІСТО <input name="city" list="cms-event-cities" /></label>
+                  <label>ДАТА НАБОРУ <input name="event_date" type="date" /></label>
+                </div>
+                <div class="cms-form-row cms-form-row-even">
+                  <label>СУМА ДО СПЛАТИ / ОПЛАЧЕНО, ₴ <input name="amount_uah" type="number" min="0" step="1" value="0" /></label>
+                  <label>ПРОМОКОД <input name="promo" placeholder="Без промокоду" /></label>
+                </div>
+                <label>ПРИМІТКИ (РОЗМІР ФОРМИ, ДОСВІД, РЕКВІЗИТИ ОПЛАТИ) <textarea name="notes" rows="3" placeholder="Напр. Оплатив на ФОП, розмір форми L, їде з другом"></textarea></label>
+                <div class="cms-inline-actions">
+                  <button class="cms-button cms-button-primary" type="submit">ЗБЕРЕГТИ ЗАЯВКУ</button>
+                  <button id="cms-mark-paid-btn" class="cms-button cms-button-quiet" type="button" style="border-color:rgba(16,185,129,.55);color:#5de3b0;">✓ ОПЛАЧЕНО → У ТАБЛИЦЮ ІВЕНТУ</button>
+                  <button id="cms-delete-application" class="cms-button cms-button-danger" type="button">ВИДАЛИТИ</button>
+                </div>
+                <p class="cms-feedback" role="status"></p>
+                <input name="id" type="hidden" />
+              </form>
+            </div>
+          </div>
+
+          <div id="cms-apps-view-finance" hidden>
+            <p class="cms-note" style="margin-bottom:14px;padding:12px 14px;border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.06);color:#d3ede0;">
+              <strong>⚡ Автоматичні таблиці без пустих файлів:</strong> окрема таблиця під кожен <strong>[Курс + Місто + Дата]</strong> створюється автоматично, щойно з’являється <strong>перший учасник зі статусом «Оплачено»</strong>, та одразу отримує налаштовані права доступу. Порожні таблиці під івенти без оплат не створюються.
+            </p>
+            <div class="cms-event-filters">
+              <label>ОБЕРІТЬ ТАБЛИЦЮ ІВЕНТУ (КУРС + МІСТО + ДАТА)
+                <select id="cms-finance-cohort-select">
+                  <option value="all">Усі створені таблиці (де є оплата)</option>
+                </select>
+              </label>
+              <label>ПОКАЗУВАТИ У ТАБЛИЦІ
+                <select id="cms-finance-status-filter">
+                  <option value="paid">Лише ті, хто вніс оплату (Стандарт)</option>
+                  <option value="active">Оплачені + ліди на прозвоні по цій даті</option>
+                  <option value="all">Усі заявки цієї дати</option>
+                </select>
+              </label>
+            </div>
+            <div id="cms-finance-roster-wrap" class="cms-finance-roster-wrap"></div>
+          </div>
+
+          <div id="cms-apps-view-sheets" hidden>
+            <div class="cms-management-grid">
+              <form id="cms-sheets-config-form" class="cms-form cms-record-form">
+                <h3>НАЛАШТУВАННЯ АВТО-ТАБЛИЦЬ ТА ДОСТУПУ</h3>
+                <p class="cms-note">Ці налаштування застосовуються автоматично до кожної нової таблиці івенту в момент першої оплати — ділитися вручну більше не потрібно.</p>
+                <label>1. РЕЖИМ ДОСТУПУ ДЛЯ КОЖНОЇ НОВОЇ ТАБЛИЦІ ЗА ЗАМОВЧУВАННЯМ
+                  <select name="access_mode">
+                    <option value="anyone_edit">🔓 Доступ за посиланням — РЕДАКТОР (усі, хто має посилання, можуть редагувати)</option>
+                    <option value="anyone_view">👁 Доступ за посиланням — ПЕРЕГЛЯД (редагують лише вказані Email нижче)</option>
+                    <option value="restricted">🔒 Закритий доступ — лише для списку Email команди та спільної папки</option>
+                  </select>
+                </label>
+                <label>2. EMAIL КОМАНДИ (ВІДДІЛ ПРОДЗВОНУ, ФІНАНСИСТ, ІНСТРУКТОРИ — ЧЕРЕЗ КОМУ)
+                  <input name="editor_emails" placeholder="Напр. callcenter@gmail.com, finance@gmail.com" />
+                </label>
+                <label>3. ПАПКА GOOGLE DRIVE ДЛЯ ЗБЕРЕЖЕННЯ ТАБЛИЦЬ ІВЕНТІВ (ПОСИЛАННЯ АБО ID — НЕОБОВ’ЯЗКОВО)
+                  <input name="drive_folder_id" placeholder="Напр. https://drive.google.com/drive/folders/1AbCdEfG..." />
+                </label>
+                <label>4. WEBHOOK URL GOOGLE APPS SCRIPT (ПІСЛЯ РОЗГОРТАННЯ СКРИПТА ПРАВОРУЧ)
+                  <input name="webhook_url" placeholder="https://script.google.com/macros/s/.../exec" />
+                </label>
+                <div class="cms-inline-actions">
+                  <button class="cms-button cms-button-primary" type="submit">ЗБЕРЕГТИ НАЛАШТУВАННЯ ДОСТУПУ</button>
+                </div>
+                <p id="cms-sheets-config-feedback" class="cms-feedback" role="status"></p>
+              </form>
+
+              <div class="cms-form cms-record-form">
+                <h3>ГОТОВИЙ СКРИПТ GOOGLE DRIVE + SHEETS (З ВАШИМИ ДОСТУПАМИ)</h3>
+                <p class="cms-note">
+                  1. Відкрийте вашу основну Google Таблицю → <strong>Розширення → Apps Script</strong>.<br />
+                  2. Натисніть кнопку нижче, вставте код і натисніть <strong>Розгорнути → Нове розгортання (Веб-додаток, Доступ: Усі)</strong>.<br />
+                  3. Вставте отриманий URL у поле №4 ліворуч. Далі під кожну нову дату після першої оплати Google Таблиця створюватиметься і роздаватиме доступ сама!
+                </p>
+                <div class="cms-inline-actions" style="margin-bottom:10px;">
+                  <button id="cms-copy-gas-code" class="cms-button cms-button-primary" type="button">📋 СКОПІЮВАТИ КОД GOOGLE APPS SCRIPT</button>
+                </div>
+                <textarea id="cms-gas-code-preview" rows="12" readonly style="font:11px/1.45 var(--mono);color:#a9dec3;"></textarea>
+                <p id="cms-gas-copy-feedback" class="cms-feedback" role="status"></p>
+              </div>
+            </div>
+          </div>
+
+          <div id="cms-apps-view-promos" hidden>
+            <div class="cms-management-grid">
+              <div id="cms-promo-list" class="cms-record-list"></div>
+              <form id="cms-promo-form" class="cms-form cms-record-form">
+                <h3>ПРОМОКОД ДЛЯ ФОРМИ ЗАПИСУ</h3>
+                <label>КОД ПРОМОКОДУ (латиницею або цифрами) <input name="code" placeholder="Напр. RESERVIST10" required /></label>
+                <div class="cms-form-row cms-form-row-even">
+                  <label>ТИП ЗНИЖКИ
+                    <select name="discount_type">
+                      <option value="percent">Відсоток (%)</option>
+                      <option value="fixed">Фіксована сума (₴)</option>
+                    </select>
+                  </label>
+                  <label>РОЗМІР ЗНИЖКИ <input name="discount_value" type="number" min="1" value="10" required /></label>
+                </div>
+                <label>ОПИС (для кого промокод) <input name="description" placeholder="Напр. Знижка 10% для підписників Telegram" /></label>
+                <label class="cms-publish-toggle"><input name="is_active" type="checkbox" checked /> АКТИВНИЙ НА САЙТІ</label>
+                <div class="cms-inline-actions">
+                  <button class="cms-button cms-button-primary" type="submit">ЗБЕРЕГТИ ПРОМОКОД</button>
+                  <button id="cms-new-promo" class="cms-button cms-button-quiet" type="button">+ НОВИЙ</button>
+                  <button id="cms-delete-promo" class="cms-button cms-button-danger" type="button">ВИДАЛИТИ</button>
+                </div>
+                <p class="cms-feedback" role="status"></p>
+                <input name="id" type="hidden" />
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <section class="cms-panel" data-cms-panel="team" hidden>
+          <div class="cms-panel-heading"><div><div class="cms-eyebrow">PEOPLE / INSTRUCTORS</div><h2>КОМАНДА</h2></div><button id="cms-new-instructor" class="cms-button cms-button-quiet" type="button">+ НОВИЙ ІНСТРУКТОР</button></div>
+          <div class="cms-management-grid">
+            <div id="cms-instructor-list" class="cms-record-list"></div>
+            <form id="cms-instructor-form" class="cms-form cms-record-form">
+              <h3>ПРОФІЛЬ ІНСТРУКТОРА</h3>
+              <label>ІМ’Я <input name="name" required /></label>
+              <label>ПОЗИВНИЙ <input name="callsign" /></label>
+              <label>РОЛЬ / ДОСВІД <input name="role" /></label>
+              <label>БІОГРАФІЯ <textarea name="bio" rows="4"></textarea></label>
+              <label>URL ФОТО <input name="photo_url" type="text" placeholder="https://… або assets/images/…" /></label>
+              <label class="cms-file-label">ЗАВАНТАЖИТИ ФОТО <input name="photo_file" type="file" accept="image/jpeg,image/png,image/webp,image/avif" /></label>
+              <div class="cms-form-row"><label>ПОРЯДОК <input name="sort_order" type="number" min="0" required /></label><label class="cms-publish-toggle"><input name="is_active" type="checkbox" checked /> АКТИВНИЙ</label></div>
+              <div class="cms-inline-actions"><button class="cms-button cms-button-primary" type="submit">ЗБЕРЕГТИ ПРОФІЛЬ</button><button id="cms-delete-instructor" class="cms-button cms-button-danger" type="button">ВИДАЛИТИ</button></div>
+              <p class="cms-feedback" role="status"></p>
+              <input name="id" type="hidden" />
+            </form>
+          </div>
+        </section>
+
+        <section class="cms-panel" data-cms-panel="reviews" hidden>
+          <div class="cms-panel-heading">
+            <div><div class="cms-eyebrow">SOCIAL PROOF / REVIEWS</div><h2>ВІДГУКИ КУРСАНТІВ</h2></div>
+            <div class="cms-inline-actions">
+              <label class="cms-publish-toggle" style="padding:8px 14px;border:1px solid var(--line);background:#0b0c0e;">
+                <input id="cms-reviews-visible" type="checkbox" /> ПОКАЗУВАТИ БЛОК ВІДГУКІВ НА ГОЛОВНІЙ
+              </label>
+              <button id="cms-new-review" class="cms-button cms-button-quiet" type="button">+ НОВИЙ ВІДГУК</button>
+            </div>
+          </div>
+          <p class="cms-note">Поки галочка «Показувати блок відгуків на головній» вимкнена, секція прихована від відвідувачів. Коли зберете реальні відгуки — впишіть їх сюди та увімкніть показ.</p>
+          <div class="cms-management-grid">
+            <div id="cms-review-list" class="cms-record-list"></div>
+            <form id="cms-review-form" class="cms-form cms-record-form">
+              <h3>КАРТКА ВІДГУКУ</h3>
+              <div class="cms-form-row cms-form-row-even">
+                <label>ІМ’Я КУРСАНТА <input name="author_name" placeholder="Напр. Олександр К." required /></label>
+                <label>КУРС / НАПРЯМОК <input name="course_name" placeholder="Напр. Карабін 1.0" required /></label>
+              </div>
+              <div class="cms-form-row cms-form-row-even">
+                <label>МІСТО <input name="city" placeholder="Напр. Київ" /></label>
+                <label>ОЦІНКА (1–5) <input name="rating" type="number" min="1" max="5" value="5" required /></label>
+              </div>
+              <label>ТЕКСТ ВІДГУКУ <textarea name="text" rows="4" placeholder="Реальний відгук випускника курсу…" required></textarea></label>
+              <div class="cms-form-row">
+                <label>ПОРЯДОК <input name="sort_order" type="number" min="1" value="1" required /></label>
+                <label class="cms-publish-toggle"><input name="is_active" type="checkbox" checked /> АКТИВНИЙ ВІДГУК</label>
+              </div>
+              <div class="cms-inline-actions">
+                <button class="cms-button cms-button-primary" type="submit">ЗБЕРЕГТИ ВІДГУК</button>
+                <button id="cms-delete-review" class="cms-button cms-button-danger" type="button">ВИДАЛИТИ</button>
+              </div>
+              <p class="cms-feedback" role="status"></p>
+              <input name="id" type="hidden" />
+            </form>
+          </div>
+        </section>
+
+        <section class="cms-panel" data-cms-panel="theme" hidden>
+          <div class="cms-panel-heading"><div><div class="cms-eyebrow">BRAND SYSTEM / DESIGN TOKENS</div><h2>ТЕМА САЙТУ</h2></div><div class="cms-inline-actions"><button id="cms-reset-theme" class="cms-button cms-button-quiet" type="button">СКИНУТИ ДО СТАНДАРТУ</button><button id="cms-save-theme" class="cms-button cms-button-primary" type="button">ЗБЕРЕГТИ ТЕМУ</button></div></div>
+          <p class="cms-note">Кольори приймаються у форматі HEX. Зміни впливають на всі сторінки, що підключені до CMS.</p>
+          <form id="cms-theme-form" class="cms-theme-form">
+            <label>ФОН <span><input name="background" type="color" /><input name="background_text" data-color-text="background" /></span></label>
+            <label>ПОВЕРХНЯ <span><input name="surface" type="color" /><input name="surface_text" data-color-text="surface" /></span></label>
+            <label>ПІДНЯТА ПОВЕРХНЯ <span><input name="surfaceRaised" type="color" /><input name="surfaceRaised_text" data-color-text="surfaceRaised" /></span></label>
+            <label>ТЕКСТ <span><input name="text" type="color" /><input name="text_text" data-color-text="text" /></span></label>
+            <label>ДРУГОРЯДНИЙ ТЕКСТ <span><input name="muted" type="color" /><input name="muted_text" data-color-text="muted" /></span></label>
+            <label>ФІРМОВИЙ ЧЕРВОНИЙ <span><input name="brand" type="color" /><input name="brand_text" data-color-text="brand" /></span></label>
+            <label>CTA <span><input name="cta" type="color" /><input name="cta_text" data-color-text="cta" /></span></label>
+            <label>СТАТУС <span><input name="status" type="color" /><input name="status_text" data-color-text="status" /></span></label>
+            <label>ШРИФТ ЗАГОЛОВКІВ <select name="heading"><option>Oswald</option><option>JetBrains Mono</option><option>system-ui</option><option>Arial</option><option>Inter</option></select></label>
+            <label>ШРИФТ ТЕКСТУ <select name="body"><option>system-ui</option><option>JetBrains Mono</option><option>Arial</option><option>Inter</option></select></label>
+            <label>ТЕЛЕФОН У ПІДВАЛІ <input name="phone" type="text" placeholder="+380 63 734 33 29" /></label>
+            <label>ДЕВІЗ У ПІДВАЛІ <input name="footer_tagline" type="text" placeholder="ПІДГОТОВКА З ПОЗИЦІЄЮ. ПРАКТИКА З ВІДПОВІДАЛЬНІСТЮ." /></label>
+            <label>INSTAGRAM (посилання) <input name="instagram_url" type="text" placeholder="https://instagram.com/…" /></label>
+            <label>TELEGRAM (посилання) <input name="telegram_url" type="text" placeholder="https://t.me/…" /></label>
+          </form>
+          <p id="cms-theme-message" class="cms-feedback" role="status"></p>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

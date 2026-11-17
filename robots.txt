@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /api.php
+Disallow: /api-config.php
+Disallow: /data/
+
+Sitemap: https://reservist.ua/sitemap.xml

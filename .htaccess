@@ -1,0 +1,18 @@
+Options -Indexes
+
+# Забороняємо прямий доступ з браузера до бази SQLite, конфігу та службових файлів
+<FilesMatch "^(api-config\.php|.*\.sqlite|.*\.sqlite3|.*\.sql)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^data/ - [F,L]
+    RewriteRule ^supabase/ - [F,L]
+</IfModule>
